@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.util.FieldConstants;
-import frc.robot.util.VisionHelpers.PoseEstimate;
+import frc.robot.util.LimelightHelpers.PoseEstimate;
+import frc.robot.util.LimelightHelpers.RawFiducial;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
@@ -34,6 +36,8 @@ public class AprilTagVisionIOPhotonVisionSIM implements AprilTagVisionIO {
   private final PhotonPoseEstimator photonEstimator;
   private VisionSystemSim visionSim;
   private PhotonCameraSim cameraSim;
+
+  private ArrayList<PoseEstimate> poseEstimates = new ArrayList<>();
 
   private double lastEstTimestamp = 0;
   private final Supplier<Pose2d> poseSupplier;
@@ -88,8 +92,8 @@ public class AprilTagVisionIOPhotonVisionSIM implements AprilTagVisionIO {
   @Override
   public void updateInputs(AprilTagVisionIOInputs inputs) {
     visionSim.update(poseSupplier.get());
+    poseEstimates.clear();
     PhotonPipelineResult results = cameraSim.getCamera().getLatestResult();
-    ArrayList<PoseEstimate> poseEstimates = new ArrayList<>();
     double timestamp = results.getTimestampSeconds();
     Optional<Alliance> allianceOptional = DriverStation.getAlliance();
     if (!results.targets.isEmpty() && allianceOptional.isPresent()) {
@@ -117,8 +121,22 @@ public class AprilTagVisionIOPhotonVisionSIM implements AprilTagVisionIO {
                 .getDistance(poseEstimation.getTranslation().toTranslation2d());
       }
       averageTagDistance /= tagIDs.length;
-      poseEstimates.add(
-          new PoseEstimate(poseEstimation, timestamp, averageTagDistance, tagIDs.length));
+      RawFiducial[] rawFiducials =
+          Arrays.stream(tagIDs)
+              .mapToObj(id -> new RawFiducial((int) id, 0, 0, 0, 0, 0, 0))
+              .toArray(RawFiducial[]::new);
+      PoseEstimate poseEstimate =
+          new PoseEstimate(
+              poseEstimation.toPose2d(),
+              timestamp,
+              0,
+              tagIDs.length,
+              0,
+              averageTagDistance,
+              0,
+              rawFiducials,
+              DriverStation.isEnabled());
+      poseEstimates.add(poseEstimate);
     }
     inputs.poseEstimates = poseEstimates;
   }
