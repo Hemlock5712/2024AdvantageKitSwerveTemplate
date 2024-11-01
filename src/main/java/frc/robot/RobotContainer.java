@@ -91,7 +91,10 @@ public class RobotContainer {
         // new ModuleIOTalonFX(2),
         // new ModuleIOTalonFX(3));
         flywheel = new Flywheel(new FlywheelIOTalonFX());
-        aprilTagVision = new AprilTagVision(new AprilTagVisionIOLimelight("limelight"));
+        aprilTagVision =
+            new AprilTagVision(
+                new AprilTagVisionIOLimelight(
+                    "limelight", drive::getRotation, drive::gyroRateDegrees));
         break;
 
       case SIM:

@@ -47,8 +47,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
 
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, leaderPosition, leaderVelocity, leaderAppliedVolts, leaderCurrent, followerCurrent);
-    leader.optimizeBusUtilization();
-    follower.optimizeBusUtilization();
   }
 
   @Override
