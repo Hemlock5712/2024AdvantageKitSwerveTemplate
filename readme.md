@@ -1,3 +1,6 @@
+# THIS LOGIC WAS USED FOR THE 2024 SEASON AND WILL BE NO LONGER UPDATED. WE WILL BE RELEASING A 2025 VERSION
+
+
 ![Hemlock's Gray Matter - AdvantageKit Swerve Base](./docs/images/Github%20Header.png)
 
 <p align="center">
