@@ -11,7 +11,7 @@ jobs:
     container: wpilib/roborio-cross-ubuntu:2024-22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Grant execute permission
         run: chmod +x gradlew
       - name: Build robot code
